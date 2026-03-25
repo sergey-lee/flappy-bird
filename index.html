@@ -129,13 +129,13 @@ let animFrame;
 const bird = {
   x: 100, y: 300, vy: 0,
   w: 38, h: 28,
-  gravity: 0.15, flapPower: -6,
+  gravity: 0.22, flapPower: -6,
   rotation: 0,
   reset() { this.x = 100; this.y = 300; this.vy = 0; this.rotation = 0; }
 };
 
 // Pipes
-const PIPE_W = 60, GAP = 200, PIPE_SPEED = 2.2;
+const PIPE_W = 60, GAP = 200, PIPE_SPEED = 3.0;
 let pipes = [];
 let pipeTimer = 0, PIPE_INTERVAL = 110;
 
