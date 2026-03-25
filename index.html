@@ -169,6 +169,7 @@ function startGame() {
   pipeTimer = 0;
   state = 'playing';
   bird.vy = bird.flapPower;
+  lastTime = 0;
   if (animFrame) cancelAnimationFrame(animFrame);
   loop();
 }
@@ -414,8 +415,13 @@ function die() {
   }, 500);
 }
 
-function loop() {
+let lastTime = 0;
+
+function loop(ts = 0) {
   animFrame = requestAnimationFrame(loop);
+
+  const dt = lastTime ? Math.min((ts - lastTime) / (1000 / 60), 3) : 1;
+  lastTime = ts;
 
   // Idle bobbing animation
   if (state === 'idle') {
@@ -435,27 +441,26 @@ function loop() {
   if (state !== 'playing') return;
 
   // Update bird
-  bird.vy += bird.gravity;
-  bird.y += bird.vy;
+  bird.vy += bird.gravity * dt;
+  bird.y += bird.vy * dt;
   bird.rotation = Math.min(Math.PI / 2, Math.max(-0.4, bird.vy * 0.06));
 
   // Update pipes
-  pipeTimer++;
+  pipeTimer += dt;
   if (pipeTimer >= PIPE_INTERVAL) { addPipe(); pipeTimer = 0; }
 
   pipes.forEach(p => {
-    p.x -= PIPE_SPEED;
+    p.x -= PIPE_SPEED * dt;
     if (!p.scored && p.x + PIPE_W < bird.x) {
       p.scored = true;
       score++;
-      if (score % 10 === 0) PIPE_SPEED; // could increase difficulty here
     }
   });
   pipes = pipes.filter(p => p.x + PIPE_W > -20);
 
   // Update clouds
   BG.clouds.forEach(c => {
-    c.x -= c.speed;
+    c.x -= c.speed * dt;
     if (c.x + c.w < 0) c.x = W + c.w;
   });
 
